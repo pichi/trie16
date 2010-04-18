@@ -37,6 +37,8 @@
 %%%-------------------------------------------------------------------
 -module(trie16).
 
+-include_lib("eunit/include/eunit.hrl").
+
 -export([set/3, get/2]).
 
 set(I, V, A) ->
@@ -90,3 +92,9 @@ set_to_segment(I, V, S) ->
 
 get_from_segment(_, []) -> [];
 get_from_segment(I, S) -> element(I+1, S).
+
+all_keys(A) -> [X || X<-lists:seq(0,255), get(X, A) =/= []].
+
+map_test_() ->
+  [?_assertEqual(" !HWdelor",
+      all_keys(lists:foldl(fun(X, D) -> set(X, X, D) end, [], "Hello World!")))].

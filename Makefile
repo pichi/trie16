@@ -15,3 +15,7 @@ clean:
 
 dialyzer:
 	@dialyzer -c ebin
+
+test: erl
+	@echo "testing:"
+	@erl -noshell -pa ebin -eval 'eunit:test({dir,"ebin/"})' -s init stop
