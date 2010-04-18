@@ -1,6 +1,20 @@
 -module(trie16).
 
--export([set_to_segment/3, get_from_segment/2]).
+-export([set/3, get/2]).
+
+set(I, V, A) ->
+    H = I bsr 4,
+    L = I band 15,
+    LS = get_from_segment(H, A),
+    LS2 = set_to_segment(L, V, LS),
+    set_to_segment(H, LS2, A).
+
+get(_, []) -> [];
+get(I, A) ->
+    H = I bsr 4,
+    L = I band 15,
+    LS = get_from_segment(H, A),
+    get_from_segment(L, LS).
 
 set_to_segment(0, V, []) ->
     {V, [], [], [], [], [], [], [], [], [], [], [], [], [], [], []};
