@@ -1,0 +1,10 @@
+This is testing Erlang trie implementation. It uses binary key and value can be
+any erlang term. Trie tree is branched on byte boundary and should support
+substring nodes. For byte lookup will be used two level tree using tuples of
+size 16.
+
+Trie will support only set and get operrations but not delete. Delete can be add
+in future but not intended now.
+
+Purpose of this module is compare its memory and performance characteristics to
+other key-value storage and learn something myself.
