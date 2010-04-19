@@ -39,62 +39,65 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
--export([set/3, get/2]).
+-export([map_set/3, map_get/2]).
 
-set(I, V, A) ->
-    H = I bsr 4,
-    L = I band 15,
-    LS = get_from_segment(H, A),
-    LS2 = set_to_segment(L, V, LS),
-    set_to_segment(H, LS2, A).
+map_set(I, V, A) ->
+    map_set(I bsr 4, I band 15, V, A).
 
-get(_, []) -> [];
-get(I, A) ->
-    H = I bsr 4,
-    L = I band 15,
-    LS = get_from_segment(H, A),
-    get_from_segment(L, LS).
+map_set(H, L, V, A) ->
+    LS = segment_get(H, A),
+    LS2 = segment_set(L, V, LS),
+    segment_set(H, LS2, A).
 
-set_to_segment(0, V, []) ->
+map_get(_, []) -> [];
+map_get(I, A) ->
+    map_get(I bsr 4, I band 15, A).
+
+map_get(_, _, []) -> [];
+map_get(H, L, A) ->
+    LS = segment_get(H, A),
+    segment_get(L, LS).
+
+segment_set(0, V, []) ->
     {V, [], [], [], [], [], [], [], [], [], [], [], [], [], [], []};
-set_to_segment(1, V, []) ->
+segment_set(1, V, []) ->
     {[], V, [], [], [], [], [], [], [], [], [], [], [], [], [], []};
-set_to_segment(2, V, []) ->
+segment_set(2, V, []) ->
     {[], [], V, [], [], [], [], [], [], [], [], [], [], [], [], []};
-set_to_segment(3, V, []) ->
+segment_set(3, V, []) ->
     {[], [], [], V, [], [], [], [], [], [], [], [], [], [], [], []};
-set_to_segment(4, V, []) ->
+segment_set(4, V, []) ->
     {[], [], [], [], V, [], [], [], [], [], [], [], [], [], [], []};
-set_to_segment(5, V, []) ->
+segment_set(5, V, []) ->
     {[], [], [], [], [], V, [], [], [], [], [], [], [], [], [], []};
-set_to_segment(6, V, []) ->
+segment_set(6, V, []) ->
     {[], [], [], [], [], [], V, [], [], [], [], [], [], [], [], []};
-set_to_segment(7, V, []) ->
+segment_set(7, V, []) ->
     {[], [], [], [], [], [], [], V, [], [], [], [], [], [], [], []};
-set_to_segment(8, V, []) ->
+segment_set(8, V, []) ->
     {[], [], [], [], [], [], [], [], V, [], [], [], [], [], [], []};
-set_to_segment(9, V, []) ->
+segment_set(9, V, []) ->
     {[], [], [], [], [], [], [], [], [], V, [], [], [], [], [], []};
-set_to_segment(10, V, []) ->
+segment_set(10, V, []) ->
     {[], [], [], [], [], [], [], [], [], [], V, [], [], [], [], []};
-set_to_segment(11, V, []) ->
+segment_set(11, V, []) ->
     {[], [], [], [], [], [], [], [], [], [], [], V, [], [], [], []};
-set_to_segment(12, V, []) ->
+segment_set(12, V, []) ->
     {[], [], [], [], [], [], [], [], [], [], [], [], V, [], [], []};
-set_to_segment(13, V, []) ->
+segment_set(13, V, []) ->
     {[], [], [], [], [], [], [], [], [], [], [], [], [], V, [], []};
-set_to_segment(14, V, []) ->
+segment_set(14, V, []) ->
     {[], [], [], [], [], [], [], [], [], [], [], [], [], [], V, []};
-set_to_segment(15, V, []) ->
+segment_set(15, V, []) ->
     {[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], V};
-set_to_segment(I, V, S) ->
+segment_set(I, V, S) ->
     setelement(I+1, S, V).
 
-get_from_segment(_, []) -> [];
-get_from_segment(I, S) -> element(I+1, S).
+segment_get(_, []) -> [];
+segment_get(I, S) -> element(I+1, S).
 
-all_keys(A) -> [X || X<-lists:seq(0,255), get(X, A) =/= []].
+all_keys(A) -> [X || X<-lists:seq(0,255), map_get(X, A) =/= []].
 
 map_test_() ->
   [?_assertEqual(" !HWdelor",
-      all_keys(lists:foldl(fun(X, D) -> set(X, X, D) end, [], "Hello World!")))].
+      all_keys(lists:foldl(fun(X, D) -> map_set(X, X, D) end, [], "Hello World!")))].
