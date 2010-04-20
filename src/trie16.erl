@@ -96,8 +96,17 @@ segment_set(I, V, S) ->
 segment_get(_, []) -> [];
 segment_get(I, S) -> element(I+1, S).
 
-all_keys(A) -> [X || X<-lists:seq(0,255), map_get(X, A) =/= []].
+map_keys(A) -> [X || X<-lists:seq(0,255), map_get(X, A) =/= []].
+
+segment_test_() ->
+  S = segment_set(3, a, segment_set(5, b, [])),
+  [ ?_assertEqual(a, segment_get(3, S)),
+    ?_assertEqual(b, segment_get(5, S))
+    | [ ?_assertEqual([], segment_get(X, S))
+      || X <- [0, 1, 2, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]]].
 
 map_test_() ->
-  [?_assertEqual(" !HWdelor",
-      all_keys(lists:foldl(fun(X, D) -> map_set(X, X, D) end, [], "Hello World!")))].
+  [ ?_assertEqual(" !HWdelor",
+      map_keys(lists:foldl(
+          fun(X, D) -> map_set(X, X, D) end,
+          [], "Hello World!")))].
